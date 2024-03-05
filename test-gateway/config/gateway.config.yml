@@ -15,6 +15,15 @@ apiEndpoints:
   daylightData:
     host: "localhost"
     paths: "/daylight/*"
+  isslocationData:
+    host: "localhost"
+    paths: "/iss-now"
+  weatherData:
+    host: "localhost"
+    paths: "/api/weather/*"
+  temperatureData:
+    host: "localhost"
+    paths: "/api/temperature/*"
 serviceEndpoints:
   httpbin:
     url: "https://httpbin.org"
@@ -22,6 +31,10 @@ serviceEndpoints:
     url: "https://65ca483b3b05d29307e01640.mockapi.io/api"
   daylight:
     url: "https://65ca483b3b05d29307e01640.mockapi.io/api"
+  isslocation:
+    url: "http://api.open-notify.org"
+  weather:
+    url: "https://jubilant-funicular-r47rr76jwr7vcw5wx-3000.app.github.dev/"
 policies:
   - basic-auth
   - cors
@@ -55,7 +68,7 @@ pipelines:
               changeOrigin: true
   daylight:
     apiEndpoints:
-      -daylightData
+      - daylightData
     policies:
       - log:
           action:
@@ -64,3 +77,38 @@ pipelines:
           - action:
               serviceEndpoint: daylight
               changeOrigin: true
+  isslocation:
+    apiEndpoints:
+      - isslocationData
+    policies:
+      - log:
+          action:
+            message: "${req.method} ${req.originalUrl}"
+      - proxy:
+          - action:
+              serviceEndpoint: isslocation
+              changeOrigin: true
+  weather:
+    apiEndpoints:
+      - weatherData
+    policies:
+      - log:
+          action:
+            message: "${req.method} ${req.originalUrl}"
+      - proxy:
+          - action:
+              serviceEndpoint: weather
+              changeOrigin: true
+  temperature:
+    apiEndpoints:
+      - temperatureData
+    policies:
+      - log:
+          action:
+            message: "${req.method} ${req.originalUrl}"
+      - proxy:
+          - action:
+              serviceEndpoint: weather
+              changeOrigin: true
+            
+            
